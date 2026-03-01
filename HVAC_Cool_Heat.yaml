@@ -1,0 +1,39 @@
+alias: HVAC Heat_Cool
+description: >-
+  Sets the climate.entryway to the same target_temp_high and target_temp_low as climate.master_bedroom if they are not equal.
+triggers:
+  - trigger: state
+    entity_id: climate.master_bedroom
+    attribute: target_temp_high
+  - trigger: state
+    entity_id: climate.master_bedroom
+    attribute: target_temp_low
+conditions:
+  - condition: or
+    conditions:
+      - condition: template
+        value_template: >
+          {{ state_attr('climate.master_bedroom', 'target_temp_high') != state_attr('climate.entryway', 'target_temp_high') }}
+      - condition: template
+        value_template: >
+          {{ state_attr('climate.master_bedroom', 'target_temp_low') != state_attr('climate.entryway', 'target_temp_low') }}
+  - condition: template
+    value_template: >
+      {{ state_attr('climate.master_bedroom', 'target_temp_high') is not none }}
+  - condition: template
+    value_template: >
+      {{ state_attr('climate.master_bedroom', 'target_temp_low') is not none }}
+actions:
+  - action: climate.set_temperature
+    target:
+      entity_id: climate.entryway
+    data:
+      target_temp_high: "{{ state_attr('climate.master_bedroom', 'target_temp_high') }}"
+      target_temp_low: "{{ state_attr('climate.master_bedroom', 'target_temp_low') }}"
+  - action: system_log.write
+    data:
+      message: >
+        Synced climate.entryway temperature to High: {{ state_attr('climate.master_bedroom', 'target_temp_high') }}, Low: {{ state_attr('climate.master_bedroom', 'target_temp_low') }} 
+        to match climate.master_bedroom.
+      level: info
+      logger: homeassistant.components.automation.hvac_heat_cool
