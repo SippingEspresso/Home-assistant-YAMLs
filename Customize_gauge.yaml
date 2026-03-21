@@ -1,0 +1,31 @@
+type: vertical-stack
+cards:
+  - type: conditional
+    conditions:
+      - entity: binary_sensor.2026_ioniq_5_ev_battery_charge
+        state: "on"
+    card:
+      type: gauge
+      entity: sensor.2026_ioniq_5_ev_battery_level
+      needle: false
+      severity:
+        green: 0
+        yellow: 101
+        red: 101
+  - type: conditional
+    conditions:
+      - entity: binary_sensor.2026_ioniq_5_ev_battery_charge
+        state: "off"
+    card:
+      type: gauge
+      entity: sensor.2026_ioniq_5_ev_battery_level
+      needle: false
+      severity:
+        green: 60
+        yellow: 30
+        red: 0
+  - type: entities
+    entities:
+      - entity: binary_sensor.2026_ioniq_5_ev_battery_charge
+      - entity: lock.2026_ioniq_5_door_lock
+      - entity: device_tracker.2026_ioniq_5_location
